@@ -1,0 +1,41 @@
+{% extends 'intake/base.html' %}
+
+{% block content %}
+
+<div class="pa3 pa5-ns">
+  <h4 class="f6 fw6">{{ object.first_name }} {{ object.last_name }}</h4>
+  <dl class="f6 lh-title mv2">
+    <dt class="dib b">Email address:</dt>
+    <dd class="dib ml0 gray">{{ object.email_address }}</dd>
+  </dl>
+<!--   <dl class="f6 lh-title mv2">
+    <dt class="dib b">Action Network ID:</dt>
+    <dd class="dib ml0 gray">{{ object.action_network_id }}</dd>
+  </dl>
+ -->  <dl class="f6 lh-title mv2">
+    <dt class="dib b">Address Line One:</dt>
+    <dd class="dib ml0 gray">{{ object.street_address_one }}</dd>
+  </dl>
+  <dl class="f6 lh-title mv2">
+    <dt class="dib b">Address Line Two:</dt>
+    <dd class="dib ml0 gray">{{ object.street_address_two }}</dd>
+  </dl>
+  <dl class="f6 lh-title mv2">
+    <dt class="dib b">City:</dt>
+    <dd class="dib ml0 gray">{{ object.city }}</dd>
+  </dl>
+  <dl class="f6 lh-title mv2">
+    <dt class="dib b">State:</dt>
+    <dd class="dib ml0 gray">{{ object.state }}</dd>
+  </dl>
+  <dl class="f6 lh-title mv2">
+    <dt class="dib b">Zip code:</dt>
+    <dd class="dib ml0 gray">{{ object.zip_code }}</dd>
+  </dl>
+
+  <dl class="f6 lh-title mv2">
+    <dt class="dib b">Phone number:</dt>
+    <dd class="dib ml0 gray">{{ object.phone_number }}</dd>
+  </dl>
+
+{% endblock %}

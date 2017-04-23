@@ -2,70 +2,72 @@
 
 """Views for intake form"""
 
-from django.shortcuts import render
+import logging
+
 from django.http import HttpResponseRedirect
+from django.shortcuts import render
 from django.urls import reverse
-from intake.forms import IntakeForm
+from django.views.generic.edit import UpdateView
+from django.views.generic.detail import DetailView
+
+from intake import forms as intake_forms
+from intake.models import EventPerson
+from intake.utils import create_person_model, osdi_to_person
 
 from pyactionnetwork import ActionNetworkApi
 
 API = ActionNetworkApi(api_key="test")
 
-
-def osdi_to_person(data):
-    """Convert the JSON from AN to filter down to a person obj."""
-
-    try:
-        people = data['_embedded']['osdi:people']
-
-        # If there are no people in the list, then the person should
-        # be redirected to sign up, since they're not in the system.
-        if len(people) == 0:
-            return None
-    except KeyError:
-        raise  # raise a 500 error cause AN is broken.
-
-    return people[0]
+logger = logging.getLogger(__name__)
 
 
 def index(request):
     """Get user email + zip and validate against AN."""
     args = {}
+    args['form'] = intake_forms.IntakeForm()
+
     if request.method == 'POST':
-        form = IntakeForm(request.POST)
+        form = intake_forms.IntakeForm(request.POST)
         if form.is_valid():
             email_address, zip_code = (form.cleaned_data.get('email_address'),
                                        form.cleaned_data.get('zip_code'))
 
-            an_data = API.get_person(search_string=email_address)
-            person = osdi_to_person(an_data)
+            data = API.get_person(search_string=email_address)
+            person = osdi_to_person(data)
 
-            if not person:
-                return HttpResponseRedirect(reverse('intake:new_member'))
+            event_person = create_person_model(data=person,
+                                               email_address=email_address,
+                                               zip_code=zip_code)
+            return HttpResponseRedirect(reverse('intake:confirm',
+                                                kwargs={'pk': event_person.id}))
 
-            try:
-                an_zip_code = person['postal_addresses'][0]['postal_code']
-            except KeyError:
-                # if we don't have their physical address in the system, send
-                # them to the sign up page.
-                return HttpResponseRedirect('TODO')
-
-            # if their zip code checks out, redirect them to confirm
-            # their address information.
-            if zip_code == an_zip_code:
-                return HttpResponseRedirect('intake:confirm')
         else:
-            args['form'] = IntakeForm(request.POST)
+            args['form'] = intake_forms.IntakeForm(request.POST)
             return render(request, 'intake/index.html', args)
     else:
         return render(request, 'intake/index.html', args)
 
 
-def new_member_signup(request):
-    """Sign up a new member with AN"""
-    pass
+class NewMemberUpdate(UpdateView):
+    """Update a member's information and save to model"""
+
+    model = EventPerson
+    fields = [
+        'email_address',
+        'first_name',
+        'last_name',
+        'street_address_one',
+        'street_address_two',
+        'city',
+        'state',
+        'zip_code',
+        'phone_number',
+    ]
+    template_name = 'intake/confirm.html'
 
 
-def confirm_member_info(request):
-    """Confirm a member's information with the data in AN."""
-    pass
+class EventPersonDetailView(DetailView):
+    """Show a member's information"""
+
+    model = EventPerson
+    template_name = 'intake/detail.html'

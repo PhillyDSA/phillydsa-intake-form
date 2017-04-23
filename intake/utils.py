@@ -2,27 +2,36 @@
 from intake.models import EventPerson
 
 
-def create_person_model(data, email_address, zip_code):
+def create_person_model(data=None, email_address=None, zip_code=None):
     """Create an event person given an email, zip, and the data from AN."""
-    person, _ = EventPerson.objects.get_or_create(email_address=email_address)
-    address_data = data.get('postal_addresses', [None])[0]
+    person, _ = EventPerson.objects.get_or_create(email_address=email_address,
+                                                  zip_code=zip_code)
+    if not data:
+        person.save()
+        return person
 
-    person.first_name = data.get('given_name', None)
-    person.last_name = data.get('family_name', None)
-    action_network_id = data.get('identifiers', [None])[0]
+    try:
+        address_data = data.get('postal_addresses', []).pop(0)
+        person.street_address_one = address_data.get('address_lines').pop(0)
+        if address_data.get('address_lines'):
+            person.street_address_two = address_data.get('address_lines').pop(0)
+        person.city = address_data.get('locality', '')
+        person.state = address_data.get('region', '')
+    except IndexError:
+        person.street_address_one = ''
+        person.street_address_two = ''
+        person.city = ''
+        person.state = ''
 
-    if action_network_id:
-        person.action_network_id = action_network_id.replace('action_network:', '')
+    person.first_name = data.get('given_name', '')
+    person.last_name = data.get('family_name', '')
+
+    try:
+        person.action_network_id = data.get('identifiers', None).pop(0).replace('action_network:', '')
+    except IndexError:
+        person.action_network_id = None
 
     person.zip_code = zip_code
-    if address_data:
-        person.street_address_one = address_data.get('address_lines', [None])[0]
-        if len(address_data.get('address_lines', [None])) > 1:
-            person.street_address_two = address_data.get('address_lines')[1]
-        else:
-            person.street_address_two = None
-        person.city = address_data.get('locality', None)
-        person.state = address_data.get('region', None)
     person.phone_number = data.get('custom_fields', {}).get('Phone Number')
 
     person.save()
@@ -32,7 +41,10 @@ def create_person_model(data, email_address, zip_code):
 
 def osdi_to_person(data):
     """Convert the JSON from AN to filter down to a person obj."""
-    people = data['_embedded']['osdi:people']
+    try:
+        people = data['_embedded']['osdi:people']
+    except KeyError:
+        return None
 
     # If there are no people in the list, then the person should
     # be redirected to sign up, since they're not in the system.
