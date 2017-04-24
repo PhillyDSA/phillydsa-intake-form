@@ -24,3 +24,13 @@ dev:
 	pyenv local phillydsa-intake-form
 	pip install -r requirements/dev.txt
 	pre-commit install
+
+install:
+	pip install -Ur requirements/dev.txt
+
+env:
+	pyenv install -s 3.6.0
+	pyenv local 3.6.0
+
+ci: clean env info test
+	codecov
