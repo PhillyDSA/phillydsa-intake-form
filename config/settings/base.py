@@ -12,25 +12,19 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+from os.path import dirname
 import configparser
 from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = dirname(dirname(dirname(os.path.abspath(__file__))))
 config = configparser.ConfigParser()
 
 try:
     config.read(os.path.join(BASE_DIR, 'conf.ini'))
-    print(BASE_DIR)
-    print(config.sections())
 except Exception:
     raise ImproperlyConfigured('BASE_DIR/confi.ini not found')
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 try:
     SECRET_KEY = config['django_keys']['secret_key']
     ACTION_NETWORK_API_KEY = config['actionnetwork']['api_key']
@@ -39,7 +33,6 @@ except KeyError:
         "Keys not found. Ensure you have ['actionnetwork']['api_key'] "
         "and ['django_keys']['secret_key'] properly set.")
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
