@@ -2,12 +2,15 @@
 
 """Tests for intake form"""
 import json
+from unittest.mock import patch
 
 from django.urls import reverse
 from django.test import (
     TestCase,
     Client,
 )
+
+import pyactionnetwork
 
 from intake.forms import IntakeForm
 from intake.models import EventPerson
@@ -24,6 +27,9 @@ with open('intake/test_data/people_no_address.json', 'r') as f:
 
 with open('intake/test_data/people_no_action_network_id.json', 'r') as f:
     SAMPLE_PERSON_DATA4 = json.loads(f.read())
+
+with open('intake/test_data/people_bad_address.json', 'r') as f:
+    SAMPLE_PERSON_DATA5 = json.loads(f.read())
 
 
 class ModelTests(TestCase):
@@ -71,6 +77,27 @@ class ModelTests(TestCase):
         assert person.zip_code == '19143'
         assert person.id is not None
 
+    def test_create_person_with_bad_address(self):
+        data = osdi_to_person(SAMPLE_PERSON_DATA5)
+        person = create_person_model(data=data,
+                                     email_address='testuser@example.com',
+                                     zip_code='19143')
+        assert person.email_address == 'testuser@example.com'
+        assert person.zip_code == '19143'
+        assert person.id is not None
+        assert person.city is ''
+
+    def test_create_person_with_bad_address2(self):
+        data = osdi_to_person(SAMPLE_PERSON_DATA2)
+        data['postal_addresses'][0]['address_lines'] = []
+        person = create_person_model(data=data,
+                                     email_address='testuser@example.com',
+                                     zip_code='19143')
+        assert person.email_address == 'testuser@example.com'
+        assert person.zip_code == '19143'
+        assert person.id is not None
+        assert person.city is ''
+
     def test_osdi_errors(self):
         data = {'in': 'correct'}
         person = osdi_to_person(data)
@@ -86,16 +113,6 @@ class ViewTests(TestCase):
         self.client = Client()
         self.person = create_person_model(email_address='testuser@example.com',
                                           zip_code='19143')
-
-    def test_event_person_reverse_url(self):
-        assert self.person.get_absolute_url() == '/detail/1/', self.person.get_absolute_url()
-        assert reverse('intake:detail', kwargs={'pk': self.person.id}) == '/detail/1/'
-
-    def test_event_person_detail_view(self):
-        resp = self.client.get(reverse('intake:detail', kwargs={'pk': self.person.id}))
-        assert resp.status_code == 200
-        assert isinstance(resp.context_data['object'], EventPerson)
-        assert resp.context_data['object'].zip_code == '19143'
 
     def test_get_index(self):
         resp = self.client.get(reverse('intake:index'))
@@ -113,3 +130,29 @@ class ViewTests(TestCase):
         assert resp.status_code == 200
         assert 'This field is required.' in resp.content.decode('utf8')
         assert resp.context['form'].errors['zip_code'][0] == 'This field is required.'
+
+    def test_get_confirm_member_info(self):
+        resp = self.client.get(reverse('intake:confirm', kwargs={'pk': 1}))
+        assert resp.status_code == 200
+        form = resp.context['form']
+        assert form.__class__.__name__ == 'EventPersonForm'
+        assert form.initial['email_address'] == self.person.email_address
+        assert form.initial['first_name'] == ''
+
+    @patch('pyactionnetwork.ActionNetworkApi.create_person')
+    def test_post_confirm_member_info(self, mock):
+        from django.forms.models import model_to_dict
+        person = EventPerson(email_address='test@example.com',
+                             zip_code='19143',
+                             city='Philadelphia',
+                             first_name='Test',
+                             last_name='User',
+                             state='PA',
+                             street_address_one='123 Main St',
+                             street_address_two='Apt 2')
+        person.save()
+        assert person.id == 2
+        person_dict = model_to_dict(person)
+        resp = self.client.post(reverse('intake:confirm', kwargs={'pk': 2}), data=person_dict)
+        assert pyactionnetwork.ActionNetworkApi.create_person.called
+        assert resp.status_code == 302

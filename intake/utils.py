@@ -1,14 +1,22 @@
 # -*- coding: utf-8 -*-
+import copy
 from intake.models import EventPerson
 
 
 def create_person_model(data=None, email_address=None, zip_code=None):
     """Create an event person given an email, zip, and the data from AN."""
-    person, _ = EventPerson.objects.get_or_create(email_address=email_address,
-                                                  zip_code=zip_code)
-    if not data:
+    try:
+        if not data or zip_code != data['postal_addresses'][0]['postal_code']:
+            person = EventPerson(email_address=email_address, zip_code=zip_code)
+            person.save()
+            return person
+    except Exception as e:
+        print(e)
+        person = EventPerson(email_address=email_address, zip_code=zip_code)
         person.save()
         return person
+
+    person = EventPerson(email_address=email_address)
 
     try:
         address_data = data.get('postal_addresses', []).pop(0)
@@ -42,7 +50,7 @@ def create_person_model(data=None, email_address=None, zip_code=None):
 def osdi_to_person(data):
     """Convert the JSON from AN to filter down to a person obj."""
     try:
-        people = data['_embedded']['osdi:people']
+        people = copy.deepcopy(data['_embedded']['osdi:people'])
     except KeyError:
         return None
 

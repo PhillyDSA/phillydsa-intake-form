@@ -3,7 +3,6 @@
 """Models for intake form"""
 
 from django.db import models
-from django.urls import reverse
 from localflavor.us.models import (
     USPostalCodeField,
     PhoneNumberField,
@@ -27,7 +26,3 @@ class EventPerson(models.Model):
 
     def __str__(self):
         return self.email_address
-
-    def get_absolute_url(self):
-        """Return default view for an EventPerson"""
-        return reverse('intake:detail', kwargs={'pk': self.pk})

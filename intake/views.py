@@ -8,7 +8,6 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic.edit import UpdateView
-from django.views.generic.detail import DetailView
 
 from intake import forms as intake_forms
 from intake.models import EventPerson
@@ -64,10 +63,26 @@ class NewMemberUpdate(UpdateView):
         'phone_number',
     ]
     template_name = 'intake/confirm.html'
+    success_url = '/'
 
+    def post(self, *args, **kwargs):
+        """Post to local system and also create or update person in AN"""
+        resp = super(NewMemberUpdate, self).post(*args, **kwargs)
+        person_id = self.request.resolver_match.kwargs['pk']
+        person = EventPerson.objects.get(id=person_id)
+        person.save()
 
-class EventPersonDetailView(DetailView):
-    """Show a member's information"""
-
-    model = EventPerson
-    template_name = 'intake/detail.html'
+        an_data = API.create_person(
+            email=person.email_address,
+            given_name=person.first_name,
+            family_name=person.last_name,
+            address=[person.street_address_one, person.street_address_two],
+            city=person.city,
+            state=person.state,
+            country='US',
+            postal_code=person.zip_code,
+            custom_fields={'Phone Number': person.phone_number},
+            tags=['2017_04_general_meeting']
+        )
+        print(an_data)
+        return resp
