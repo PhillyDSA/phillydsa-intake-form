@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,6 +7,13 @@
     <link rel="stylesheet" href="https://unpkg.com/tachyons@4.7.0/css/tachyons.min.css"/>
 </head>
 <body class="sans-serif">
+
+<header class="center mb4 ph3 ph4-ns pt4 pt5-ns">
+    <a href="/" class="link black"><div class="ph2-ns tc">
+        <img class="dib h3" src="{% static 'imgs/DSAlogo.png' %}">
+        <h1 class="dib f-subheadline fw3 mb0 mt1">Philly DSA</h1>
+    </div></a>
+</header>
 
 <main class="pa2 center w-80">
 

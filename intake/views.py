@@ -4,6 +4,8 @@
 
 import logging
 
+from django.conf import settings
+from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -15,7 +17,7 @@ from intake.utils import create_person_model, osdi_to_person
 
 from pyactionnetwork import ActionNetworkApi
 
-API = ActionNetworkApi(api_key="test")
+API = ActionNetworkApi(settings.ACTION_NETWORK_API_KEY)
 
 logger = logging.getLogger(__name__)
 
@@ -85,4 +87,5 @@ class NewMemberUpdate(UpdateView):
             tags=['2017_04_general_meeting']
         )
         print(an_data)
+        messages.success(self.request, "Your information has been saved. Thanks for signing in!")
         return resp

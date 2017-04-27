@@ -3,7 +3,7 @@
 {% block content %}
 
 <form action="." method="post" class="pa4 black-80">{% csrf_token %}
-    <div class="measure">
+    <div class="measure center">
     {% for field in form %}
         <label for="{{ field.id_for_label }}" class="f6 b db mb2">{{ field.label }}</label>
         <input name="{{ field.name }}" class="sans-serif input-reset ba b--black-20 pa2 mb4 db w-100" autocomplete="off" value="{{ field.value }}">
