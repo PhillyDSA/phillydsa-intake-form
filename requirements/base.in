@@ -1,1 +1,3 @@
 django
+django-localflavor
+-e git+git@github.com:phillydsa/pyactionnetwork@develop#egg=pyactionnetwork

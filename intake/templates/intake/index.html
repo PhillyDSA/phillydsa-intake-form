@@ -1,0 +1,24 @@
+{% extends 'intake/base.html' %}
+
+{% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="measure center pa4">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+<form action="." method="post" class="pa4 black-80">{% csrf_token %}
+    <div class="measure center">
+        {{ form.non_field_errors }}
+        <label for="{{ form.email_address.id_for_label }}" class="f6 b db mb2">Email Address</label>
+        {{ form.email_address.errors}}
+        <input name="{{ form.email_address.name }}" class="sans-serif input-reset ba b--black-20 pa2 mb4 db w-100" autocomplete="off" required="true" type="email" aria-describedby="Enter your email address">
+
+        <label for="{{ form.zip_code.id_for_label }}" class="f6 b db mb2">Zip Code</label>{{ form.zip_code.errors}}
+        <input name="{{ form.zip_code.name }}" class="sans-serif input-reset ba b--black-20 pa2 mb4 db w-100" autocomplete="off" required="true" type="text" aria-describedby="Enter your zip code">
+        <input class="sans-serif b ph3 pv2 input-reset white ba b--transparent bg-black pointer f6 dib" type="submit" value="Sign in">
+    </div>
+</form>
+
+{% endblock %}
