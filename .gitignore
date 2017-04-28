@@ -100,3 +100,4 @@ db.sqlite3
 
 # LOCAL SETTINGS
 conf.ini
+static/*

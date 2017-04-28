@@ -6,6 +6,7 @@
 #
 django-localflavor==1.4.1
 django==1.11
+gunicorn==19.7.1
 pyactionnetwork==0.1.0
 pytz==2017.2              # via django
 requests==2.13.0          # via pyactionnetwork

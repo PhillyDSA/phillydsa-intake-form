@@ -33,8 +33,6 @@ except KeyError:
         "Keys not found. Ensure you have ['actionnetwork']['api_key'] "
         "and ['django_keys']['secret_key'] properly set.")
 
-DEBUG = True
-
 ALLOWED_HOSTS = []
 INTERNAL_IPS = ['127.0.0.1']
 
@@ -48,7 +46,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'intake',
-    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
