@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/PhillyDSA/phillydsa-intake-form.svg?style=svg)](https://circleci.com/gh/PhillyDSA/phillydsa-intake-form) [![codecov](https://codecov.io/gh/PhillyDSA/phillydsa-intake-form/branch/develop/graph/badge.svg)](https://codecov.io/gh/PhillyDSA/phillydsa-intake-form)
+
 # Philly DSA Intake Form
 Temporary form to be used for updating membership info at general meetings until we can provide this functionality on the main website.
 
