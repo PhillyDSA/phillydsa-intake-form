@@ -18,6 +18,7 @@ from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = dirname(dirname(dirname(os.path.abspath(__file__))))
+print(BASE_DIR)
 config = configparser.ConfigParser()
 
 try:
@@ -139,7 +140,7 @@ STATICFILES_DIRS = [
     os.path.join(os.path.join(BASE_DIR, 'config'), 'static'),
 ]
 
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
