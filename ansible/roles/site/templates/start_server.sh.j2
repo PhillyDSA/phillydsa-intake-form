@@ -1,0 +1,20 @@
+#!/bin/bash
+
+NAME="{{ domain }}"
+SERVERDIR={{ http_root }}/{{ domain }}/
+VENVDIR={{ http_root }}/venvs/{{ domain }}
+PORT={{ django_port }}
+NUM_WORKERS=2
+
+cd $SERVERDIR
+source $VENVDIR/bin/activate
+
+DJANGO_SETTINGS_MODULE={{ django_settings_module }}
+DJANGO_WSGI_MODULE={{ django_wsgi_module }}
+export PYTHONPATH=$SERVERDIR:$PYTHONPATH
+
+exec $VENVDIR/bin/gunicorn ${DJANGO_WSGI_MODULE}:application \
+    --name $NAME \
+    --workers $NUM_WORKERS \
+    --log-level=info \
+    --bind=127.0.0.1:$PORT

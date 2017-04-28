@@ -3,7 +3,7 @@ Temporary form to be used for updating membership info at general meetings until
 
 ## Installation
 
-_TKTK_
+Standard Django installation. You'll need to create a `conf.ini` file similar to the one in the repo with your API key for [ActionNetwork](http://www.actionnetwork.org) and your Django `SECRET_KEY`.
 
 ## Contributing
 

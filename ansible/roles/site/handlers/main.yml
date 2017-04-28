@@ -1,0 +1,12 @@
+---
+- name: Start Supervisor
+  service: name=supervisor state=started
+
+- name: Start Supervisord Program
+  supervisorctl: name={{ domain }} state=started
+
+- name: Restart Supervisord Program
+  supervisorctl: name={{ domain }} state=restarted
+
+- name: Restart Supervisord
+  service: name=supervisor state=restarted

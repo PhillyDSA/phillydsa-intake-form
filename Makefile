@@ -14,7 +14,8 @@ lint:
 	pre-commit run -a
 
 test:
-	pytest
+	pytest --cov
+	coverage html
 
 dev:
 	pyenv install -s 3.6.0
@@ -23,3 +24,16 @@ dev:
 	pyenv local phillydsa-intake-form
 	pip install -r requirements/dev.txt
 	pre-commit install
+
+install:
+	pip install -Ur requirements/dev.txt
+
+env:
+	pyenv install -s 3.6.0
+	pyenv local 3.6.0
+
+ci: clean env info test
+	codecov
+
+deploy:
+	ansible-playbook --private-key=.vagrant/machines/default/virtualbox/private_key -u vagrant -i ansible/hosts ansible/dsa_intake.yml -vvvv
