@@ -13,25 +13,12 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 from os.path import dirname
-import configparser
-from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = dirname(dirname(dirname(os.path.abspath(__file__))))
-config = configparser.ConfigParser()
 
-try:
-    config.read(os.path.join(BASE_DIR, 'conf.ini'))
-except Exception:
-    raise ImproperlyConfigured('BASE_DIR/confi.ini not found')
-
-try:
-    SECRET_KEY = config['django_keys']['secret_key']
-    ACTION_NETWORK_API_KEY = config['actionnetwork']['api_key']
-except KeyError:
-    raise ImproperlyConfigured(
-        "Keys not found. Ensure you have ['actionnetwork']['api_key'] "
-        "and ['django_keys']['secret_key'] properly set.")
+SECRET_KEY = 'test'
+ACTION_NETWORK_API_KEY = 'test'
 
 ALLOWED_HOSTS = []
 INTERNAL_IPS = ['127.0.0.1']

@@ -2,6 +2,9 @@
 - name: Start Supervisor
   service: name=supervisor state=started
 
+- name: Read Supervisord Program
+  supervisorctl: name={{ domain }} state=present
+
 - name: Start Supervisord Program
   supervisorctl: name={{ domain }} state=started
 

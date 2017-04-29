@@ -26,27 +26,50 @@
     force: yes
     key_file: "/root/.ssh/id_deploy"
 
+- name: Fix permissions on git clone
+  file:
+    path: "{{ http_root }}/{{ domain }}/"
+    owner: "{{ http_user }}"
+    group: "{{ http_user }}"
+    recurse: true
+
 - name: Install Virtual Environment & Requirements
   pip:
     requirements: "{{ http_root }}/{{ domain }}/requirements/base.txt"
     virtualenv: "{{ http_root }}/venvs/{{ domain }}"
     virtualenv_python: python3.5
 
-- name: Collect Static Files
+- name: Create Collect Static Script
   template:
     src: "collect_static.sh.j2"
     dest: "{{ http_root }}/{{ domain }}/collect_static.sh"
     mode: 0755
 
-- name: Collect Static Files Part 2
+- name: Collect Static Files
   shell: "{{ http_root }}/{{ domain }}/collect_static.sh"
 
+- name: Create Migration Script
+  template:
+    src: "migrate.sh.j2"
+    dest: "{{ http_root }}/{{ domain }}/migrate.sh"
+    mode: 0755
+
+- name: Migrate Database
+  shell: "{{ http_root }}/{{ domain }}/migrate.sh"
 
 - name: Create Server Start Script
   template:
     src: "start_server.sh.j2"
     dest: "{{ http_root }}/{{ domain }}/start_server.sh"
     mode: 0755
+
+- name: Copy conf.ini
+  copy:
+    src: ../conf.ini
+    dest: "{{ http_root }}/{{ domain }}/conf.ini"
+    owner: "{{ http_user }}"
+    group: "{{ http_user }}"
+
 
 - name: Enable Site Config
   file: src=/etc/nginx/sites-available/{{ domain }}.conf dest=/etc/nginx/sites-enabled/{{ domain }}.conf state=link
@@ -56,5 +79,6 @@
 - name: Install Supervisord Config
   template: src=supervisor.conf.j2 dest=/etc/supervisor/conf.d/{{ domain }}.conf
   notify:
-    - Start Supervisor
+    - Restart Supervisord
+    - Read Supervisord Program
     - Start Supervisord Program

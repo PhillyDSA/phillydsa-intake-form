@@ -3,6 +3,8 @@
 NAME="{{ domain }}"
 SERVERDIR={{ http_root }}/{{ domain }}/
 VENVDIR={{ http_root }}/venvs/{{ domain }}
+USER="{{ http_user}}"
+GROUP="{{ http_user }}"
 PORT={{ django_port }}
 NUM_WORKERS=2
 
@@ -16,5 +18,6 @@ export PYTHONPATH=$SERVERDIR:$PYTHONPATH
 exec $VENVDIR/bin/gunicorn ${DJANGO_WSGI_MODULE}:application \
     --name $NAME \
     --workers $NUM_WORKERS \
+    --user=$USER --group=$GROUP \
     --log-level=info \
     --bind=127.0.0.1:$PORT
