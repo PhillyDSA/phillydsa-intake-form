@@ -1,5 +1,5 @@
-- name: Start Supervsiord
+- name: Start Supervisord
   service: name=supervisor state=started
 
-- name: Restart Supervsiord
+- name: Restart Supervisord
   service: name=supervisor state=restarted

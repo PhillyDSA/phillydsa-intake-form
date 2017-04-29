@@ -35,5 +35,8 @@ env:
 ci: clean env info test
 	codecov
 
-deploy:
+.PHONY: ansible
+ansible:
+	vagrant up
+	vagrant provision
 	ansible-playbook --private-key=.vagrant/machines/default/virtualbox/private_key -u vagrant -i ansible/hosts ansible/dsa_intake.yml -vvvv

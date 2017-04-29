@@ -12,7 +12,7 @@ server {
     }
 
     location /static/ {
-        alias {{ http_root }}/{{ domain }}/site_assets/;
+        alias {{ http_root }}/{{ domain }}/static/;
         expires 0d;
 
         if ($request_filename ~* ^.*?/([^/]*?)$){

@@ -8,6 +8,6 @@
    - Start Nginx
 
 - name: Disable Default Config
-  file: dest=/etc/nginx/sites-enabled/defalt state=absent
+  file: dest=/etc/nginx/sites-enabled/default state=absent
   notify:
     - Reload Nginx
