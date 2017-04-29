@@ -26,18 +26,18 @@
     force: yes
     key_file: "/root/.ssh/id_deploy"
 
-- name: Fix permissions on git clone
-  file:
-    path: "{{ http_root }}/{{ domain }}/"
-    owner: "{{ http_user }}"
-    group: "{{ http_user }}"
-    recurse: true
-
 - name: Install Virtual Environment & Requirements
   pip:
     requirements: "{{ http_root }}/{{ domain }}/requirements/base.txt"
     virtualenv: "{{ http_root }}/venvs/{{ domain }}"
     virtualenv_python: python3.5
+
+- name: Copy conf.ini
+  copy:
+    src: ../conf.ini
+    dest: "{{ http_root }}/{{ domain }}/conf.ini"
+    owner: "{{ http_user }}"
+    group: "{{ http_user }}"
 
 - name: Create Collect Static Script
   template:
@@ -63,13 +63,12 @@
     dest: "{{ http_root }}/{{ domain }}/start_server.sh"
     mode: 0755
 
-- name: Copy conf.ini
-  copy:
-    src: ../conf.ini
-    dest: "{{ http_root }}/{{ domain }}/conf.ini"
+- name: Fix permissions on git clone
+  file:
+    path: "{{ http_root }}/{{ domain }}/"
     owner: "{{ http_user }}"
     group: "{{ http_user }}"
-
+    recurse: true
 
 - name: Enable Site Config
   file: src=/etc/nginx/sites-available/{{ domain }}.conf dest=/etc/nginx/sites-enabled/{{ domain }}.conf state=link
