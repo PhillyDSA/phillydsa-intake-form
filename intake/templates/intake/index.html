@@ -4,9 +4,15 @@
 
 {% if messages %}
     {% for message in messages %}
-        <div class="measure center pa4">{{ message }}</div>
+        <div class="messages tc center pa4 dt">
+            <div class="dtc v-mid f1 fw9 measure center">
+            {{ message|safe }}
+            </div>
+        </div>
     {% endfor %}
 {% endif %}
+
+
 
 <form action="." method="post" class="pa4 black-80">{% csrf_token %}
     <div class="measure center">

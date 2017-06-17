@@ -39,4 +39,7 @@ ci: clean env info test
 ansible:
 	vagrant up
 	vagrant provision
-	ansible-playbook --private-key=.vagrant/machines/default/virtualbox/private_key -u vagrant -i ansible/hosts ansible/dsa_intake.yml -vvvv
+	ansible-playbook --private-key=.vagrant/machines/default/virtualbox/private_key -u vagrant -i ansible/hosts ansible/dsa_intake_ansible.yml -vvvv
+
+deploy:
+	ansible-playbook --private-key=~/.ssh/id_rsa -u root -i ansible/hosts ansible/dsa_intake_web.yml -vvvv
