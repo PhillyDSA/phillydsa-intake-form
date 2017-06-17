@@ -6,14 +6,45 @@
     <title>Philly DSA Intake Form</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://unpkg.com/tachyons@4.7.0/css/tachyons.min.css"/>
+    <style>
+        @keyframes fadeOutAndClear {
+          0% {
+            opacity: 1;
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1);
+            opacity: 0;
+          }
+          100% {
+            opacity: 0;
+            transform: scale(0);
+          }
+        }
+        .messages {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: white;
+            animation-delay: 1s;
+            animation-duration: 1s;
+            animation-name: fadeOutAndClear;
+            animation-fill-mode: forwards;
+        }
+    </style>
 </head>
 <body class="sans-serif">
 
 <header class="center mb4 ph3 ph4-ns pt4 pt5-ns">
-    <a href="/" class="link black"><div class="ph2-ns tc">
-        <img class="dib h3" src="{% static 'imgs/DSAlogo.png' %}">
-        <h1 class="dib f-subheadline fw3 mb0 mt1">Philly DSA</h1>
-    </div></a>
+    <a href="/" class="link black">
+        <div class="ph2-ns tc">
+            <img class="dib h3" src="{% static 'imgs/DSAlogo.png' %}">
+            <h1 class="dib f-subheadline fw3 mb0 mt1">Philly DSA</h1>
+            <p><h3 class="dib f-title fw3 mb0 mt1">2017 Local Convention!!<br>Please Sign In!</h3></p>
+        </div>
+    </a>
 </header>
 
 <main class="pa2 center w-80">

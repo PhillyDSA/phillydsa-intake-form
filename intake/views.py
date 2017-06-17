@@ -34,7 +34,9 @@ def index(request):
                                        form.cleaned_data.get('zip_code'))
 
             data = API.get_person(search_string=email_address)
+            logger.debug(data)
             person = osdi_to_person(data)
+            logger.debug(data)
 
             event_person = create_person_model(data=person,
                                                email_address=email_address,
@@ -84,8 +86,8 @@ class NewMemberUpdate(UpdateView):
             country='US',
             postal_code=person.zip_code,
             custom_fields={'Phone Number': person.phone_number},
-            tags=['2017_04_general_meeting']
+            tags=['2017_06_convention']
         )
-        print(an_data)
-        messages.success(self.request, "Your information has been saved. Thanks for signing in!")
+        logger.debug(an_data)
+        messages.success(self.request, "Your information has been saved.<br>Thanks for signing in!")
         return resp
