@@ -1,3 +1,5 @@
+# Unmaintained. Deprecated in favor of [DSA Sign In Sheets](https://github.com/PhillyDSA/dsa-sign-in-sheets)
+
 [![CircleCI](https://circleci.com/gh/PhillyDSA/phillydsa-intake-form.svg?style=svg)](https://circleci.com/gh/PhillyDSA/phillydsa-intake-form) [![codecov](https://codecov.io/gh/PhillyDSA/phillydsa-intake-form/branch/develop/graph/badge.svg)](https://codecov.io/gh/PhillyDSA/phillydsa-intake-form)
 
 # Philly DSA Intake Form
